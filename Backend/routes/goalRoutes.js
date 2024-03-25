@@ -8,7 +8,7 @@ const { getGoal, setGoal, updateGoal, deleteGoal } = require('../controllers/goa
 // router.put('/:id' , updateGoal)
 // router.delete('/:id' , deleteGoal)
 // OR 
-router.route('/').get(getGoal).put(setGoal)
+router.route('/').get(getGoal).post(setGoal)
 router.route('/:id').put(updateGoal).delete(deleteGoal)
 
 module.exports = router
