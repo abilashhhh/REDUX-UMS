@@ -3,12 +3,16 @@ const router = express.Router()
 
 const { getGoal, setGoal, updateGoal, deleteGoal } = require('../controllers/goalcontroller')
 
-// router.get('/' , getGoal)
-// router.post('/' , setGoal)
-// router.put('/:id' , updateGoal)
-// router.delete('/:id' , deleteGoal)
+// middleware functions
+const { protect } = require('../middleware/authMiddleware')
+
+
+// router.get('/' , protect ,getGoal)
+// router.post('/' ,protect, setGoal)
+// router.put('/:id' , protect,updateGoal)
+// router.delete('/:id' ,protect, deleteGoal)
 // OR 
-router.route('/').get(getGoal).post(setGoal)
-router.route('/:id').put(updateGoal).delete(deleteGoal)
+router.route('/').get(protect, getGoal).post(protect, setGoal)
+router.route('/:id').put(protect, updateGoal).delete(protect, deleteGoal)
 
 module.exports = router
