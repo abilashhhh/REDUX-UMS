@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FaUser } from 'react-icons/fa'
-import { register, reset } from '../features/auth/authSlice'
-import Spinner from '../components/Spinner'
+import { register, reset } from '../../features/auth/authSlice'
+import Spinner from '../../components/Spinner'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -45,7 +45,13 @@ function Register() {
   const onSubmit = (e) => {
     e.preventDefault()
 
-    if (password !== password2) {
+    if (name.trim() === '' || email.trim() === '' || password.trim() === '' || password2.trim() === '') {
+      toast.error('Please fill in all fields')
+    } else if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long')
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error('Please enter a valid email address')
+    } else  if (password !== password2) {
       toast.error('Passwords do not match')
     } else {
       const userData = {

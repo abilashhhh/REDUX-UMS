@@ -10,6 +10,7 @@ const User = require('../models/userModel')
 
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body
+    console.log(req.body)
 
     // validation : 
     if (!name || !email || !password) {
@@ -40,6 +41,8 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user.id,
             name: user.name,
             email: user.email,
+            is_active: user.is_active,
+            image_url: user.image_url,
             token: generateToken(user._id)
         })
     } else {
@@ -56,22 +59,84 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
 
     const { email, password } = req.body
+    const user = await User.findOne({ email })
+
+    if (!user.is_active) {
+        res.status(400)
+        throw new Error('User is blocked by admin, Cant login')
+    }
+
+    if (user.is_admin) {
+        res.status(400)
+        throw new Error('Admins should login using admins page')
+    }
+
 
     // Check for user email
-    const user = await User.findOne({ email })
     // user.password is the hashed password
-    if (user && bcrypt.compare(password, user.password)) {
-        res.json({
+    if (user && await (bcrypt.compare(password, user.password))) {
+        res.status(200).json({
             _id: user.id,
             name: user.name,
             email: user.email,
+            is_active: user.is_active,
+            image_url: user.image_url,
             token: generateToken(user._id)
         })
     } else {
         res.status(400)
-        throw new Error("Invalid creedentials")
+        throw new Error("Invalid credentials")
     }
 
+})
+
+// Profile updates
+
+
+const updateUser = asyncHandler(async (req, res) => {
+    const { id, email, name } = req.body.userData;
+
+    if (!email && !name) {
+        res.status(400);
+        throw new Error('Invalid credentials');
+    }
+
+    if (email) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser && existingUser._id.toString() !== id) {
+            res.status(401);
+            throw new Error('Email already exists. Please try a different email.');
+        }
+    }
+
+    let updateFields = {};
+    if (email) {
+        updateFields.email = email;
+    }
+    if (name) {
+        updateFields.name = name;
+    }
+
+    const user = await User.findByIdAndUpdate(id, updateFields, { new: true });
+
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
+
+    res.status(200).json(user);
+});
+
+
+const updateProfileImage = asyncHandler(async (req, res) => {
+    console.log(req.body)
+    const { id, imageUrl } = req.body.userData
+    const user = await User.findByIdAndUpdate(id, { image_url: imageUrl }, { new: true })
+    if (!user) {
+        res.status(400)
+        throw new Error('No new data have been updated')
+    }
+    res.status(200).json(user)
 })
 
 
@@ -91,8 +156,8 @@ const loginUser = asyncHandler(async (req, res) => {
 // })
 
 const getMe = asyncHandler(async (req, res) => {
-        res.status(200).json(req.user)
-    })
+    res.status(200).json(req.user)
+})
 
 // Generate token
 const generateToken = (id) => {
@@ -105,5 +170,7 @@ const generateToken = (id) => {
 module.exports = {
     registerUser,
     loginUser,
-    getMe
+    getMe,
+    updateUser,
+    updateProfileImage
 }

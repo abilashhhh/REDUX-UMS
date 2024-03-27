@@ -14,6 +14,17 @@ const userSchema = mongoose.Schema(
         password: {
             type: String,
             required: [true, 'Please add a password']
+        },
+        is_admin: {
+            type: Boolean,
+            default: false
+        },
+        is_active: {
+            type: Boolean,
+            default: true
+        },
+        image_url: {
+            type: String
         }
     }
     ,
