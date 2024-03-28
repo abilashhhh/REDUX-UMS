@@ -10,7 +10,6 @@ import Register from './pages/user/Register';
 import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminLogin from './pages/admin/AdminLogin'
-// import AddUser from './pages/admin/AddUser';
 import AddUser from './components/AddUser';
 function App() {
   return (

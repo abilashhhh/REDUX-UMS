@@ -45,9 +45,7 @@ function Profile() {
     }, [isError, user, message])
 
 
-    // const preset_key = 'xdxoqisy'
     const preset_key = 'qwi4ytn6'
-    // const cloud_name = 'dwxhfdats'
     const cloud_name = 'ddmvbrzba'
     const [imageUrl, setImageUrl] = useState()
     const handleFile = (e) => {
